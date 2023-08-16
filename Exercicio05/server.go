@@ -8,12 +8,12 @@ import (
 	"net/rpc"
 )
 
-func main() {
+func server() {
 
-	// cria instância da calculadora
+	// cria instância da bookstore
 	bookstore := impl.NewBookstore()
 
-	// cria um novo consumer RPC e registra a calculadora
+	// cria um novo consumer RPC e registra a livraria
 	server := rpc.NewServer()
 	err := server.RegisterName("Bookstore", bookstore)
 
@@ -33,4 +33,11 @@ func main() {
 	fmt.Println("Servidor está pronto (RPC-TCP)...")
 	server.Accept(ln)
 
+}
+
+func main() {
+
+	go server()
+
+	_, _ = fmt.Scanln()
 }
