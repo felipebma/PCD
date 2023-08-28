@@ -11,6 +11,8 @@ import (
 
 func main() {
 
+	count := 0
+
 	// cria conexão com o broker
 	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
 	shared.ChecaErro(err, "Não foi possível se conectar ao broker")
@@ -67,5 +69,7 @@ func main() {
 			},
 		)
 		shared.ChecaErro(err, "Falha ao enviar a mensagem para o broker")
+		count++
+		println(count)
 	}
 }

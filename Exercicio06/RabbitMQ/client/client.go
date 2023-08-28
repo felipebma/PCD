@@ -25,9 +25,11 @@ func main() {
 	shared.ChecaErro(err, "Não foi possível estabelecer um canal de comunicação com o servidor de mensageria")
 	defer ch.Close()
 
+	queue_name := shared.RandomString(32)
+
 	// declara a fila para as respostas
 	replyQueue, err := ch.QueueDeclare(
-		shared.ResponseQueue,
+		queue_name,
 		false,
 		false,
 		true,
@@ -62,7 +64,7 @@ func main() {
 			amqp.Publishing{
 				ContentType:   "text/plain",
 				CorrelationId: correlationID,
-				ReplyTo:       replyQueue.Name,
+				ReplyTo:       queue_name,
 				Body:          msgRequestBytes,
 			},
 		)
