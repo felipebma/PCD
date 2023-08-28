@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"os"
 	"shared"
+	"strconv"
 	"sync"
+	"time"
 
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 )
@@ -15,6 +17,7 @@ const qos = 1
 var wg sync.WaitGroup
 
 func main() {
+	start := time.Now()
 
 	// configurar cliente
 	opts := MQTT.NewClientOptions()
@@ -37,18 +40,18 @@ func main() {
 	defer client.Disconnect(250)
 
 	// subscrever a um topico & usar um handler para receber as mensagens
-	token = client.Subscribe(shared.MQTTReply, qos, receiveHandler)
+	token = client.Subscribe(shared.MQTTReply+clientID, qos, receiveHandler)
 	token.Wait()
 	if token.Error() != nil {
 		fmt.Println(token.Error())
 		os.Exit(1)
 	}
 
+	wg.Add(shared.SampleSize)
 	// loop
 	for i := 0; i < shared.SampleSize; i++ {
 		// cria a mensagem
-		wg.Add(1)
-		msg, err := json.Marshal(shared.Request{Keywords: "Harry Potter"})
+		msg, err := json.Marshal(shared.Request{ClientID: clientID, Keywords: "Harry Potter"})
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -61,8 +64,10 @@ func main() {
 			fmt.Println(token.Error())
 			os.Exit(1)
 		}
-		wg.Wait()
 	}
+	wg.Wait()
+	total := time.Now().Sub(start).Nanoseconds()
+	fmt.Fprintf(os.Stderr, strconv.FormatInt(total, 10))
 }
 
 var receiveHandler MQTT.MessageHandler = func(c MQTT.Client, m MQTT.Message) {

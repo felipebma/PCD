@@ -10,7 +10,7 @@ import (
 	MQTT "github.com/eclipse/paho.mqtt.golang"
 )
 
-const qos = 1
+const qos = 0
 
 func main() {
 

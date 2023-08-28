@@ -37,18 +37,18 @@ func main() {
 	defer client.Disconnect(250)
 
 	// subscrever a um tópico & usar um handler para receber as mensagens
-	token = client.Subscribe(shared.MQTTReply, qos, receiveHandler)
+	token = client.Subscribe(shared.MQTTReply+clientID, qos, receiveHandler)
 	token.Wait()
 	if token.Error() != nil {
 		fmt.Println(token.Error())
 		os.Exit(1)
 	}
 
+	wg.Add(shared.SampleSize)
 	// loop
-	for i := 0; i < 10000; i++ {
+	for i := 0; i < shared.SampleSize; i++ {
 		// cria a mensagem
-		wg.Add(1)
-		msg, err := json.Marshal(shared.Request{Keywords: "Harry Potter"})
+		msg, err := json.Marshal(shared.Request{ClientID: clientID, Keywords: "Harry Potter"})
 		if err != nil {
 			fmt.Println(err)
 			os.Exit(1)
@@ -61,8 +61,8 @@ func main() {
 			fmt.Println(token.Error())
 			os.Exit(1)
 		}
-		wg.Wait()
 	}
+	wg.Wait()
 }
 
 var receiveHandler MQTT.MessageHandler = func(c MQTT.Client, m MQTT.Message) {

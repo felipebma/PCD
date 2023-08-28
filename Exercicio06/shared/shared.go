@@ -6,7 +6,7 @@ import (
 )
 
 // MQTT
-const MQTTHost = "mqtt://localhost:1883"
+const MQTTHost = "tcp://localhost:1883"
 const MQTTTopic = "PubSub"
 const MQTTRequest = "request"
 const MQTTReply = "reply"
