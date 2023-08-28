@@ -5,12 +5,19 @@ import (
 	"math/rand"
 )
 
+// MQTT
+const MQTTHost = "mqtt://localhost:1883"
+const MQTTTopic = "PubSub"
+const MQTTRequest = "request"
+const MQTTReply = "reply"
+
 // Other configurations
 const SampleSize = 10000
 const RequestQueue = "request_queue"
 const ResponseQueue = "response_queue"
 
 type Request struct {
+	ClientID string
 	Keywords string
 }
 
