@@ -29,23 +29,24 @@ func main() {
 
 	// declara a fila para as respostas
 	replyQueue, err := ch.QueueDeclare(
-		queue_name,
-		false,
-		false,
-		true,
-		false,
-		nil,
+		queue_name, // name
+		false,      // durable
+		false,      // delete when unused
+		true,       // exclusive
+		false,      // no-wait
+		nil,        // arguments
 	)
 
 	// cria servidor da fila de response
 	msgs, err := ch.Consume(
-		replyQueue.Name,
-		"",
-		true,
-		false,
-		false,
-		false,
-		nil)
+		replyQueue.Name, // queue
+		"",              // consumer
+		true,            // auto-ack
+		false,           // exclusive
+		false,           // no-local
+		false,           // no-wait
+		nil,             // args
+	)
 	shared.ChecaErro(err, "Falha ao registrar o servidor no broker")
 
 	for i := 0; i < shared.SampleSize; i++ {
@@ -57,15 +58,15 @@ func main() {
 		correlationID := shared.RandomString(32)
 
 		err = ch.Publish(
-			"",
-			shared.RequestQueue,
-			false,
-			false,
-			amqp.Publishing{
-				ContentType:   "text/plain",
-				CorrelationId: correlationID,
-				ReplyTo:       queue_name,
-				Body:          msgRequestBytes,
+			"",                  // exchange
+			shared.RequestQueue, // routing key
+			false,               // mandatory
+			false,               // immediate
+			amqp.Publishing{ // publishing
+				ContentType:   "text/plain",    // content type
+				CorrelationId: correlationID,   // correlation id
+				ReplyTo:       queue_name,      // reply queue
+				Body:          msgRequestBytes, // body
 			},
 		)
 
