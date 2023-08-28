@@ -12,6 +12,8 @@ import (
 
 const qos = 0
 
+var count = 0
+
 func main() {
 
 	// configurar cliente
@@ -51,6 +53,7 @@ var receiveHandler MQTT.MessageHandler = func(c MQTT.Client, m MQTT.Message) {
 }
 
 func handleConnection(c MQTT.Client, m MQTT.Message) {
+	count++
 	req := shared.Request{}
 	err := json.Unmarshal(m.Payload(), &req)
 	if err != nil {
@@ -72,6 +75,7 @@ func handleConnection(c MQTT.Client, m MQTT.Message) {
 		fmt.Println(token.Error())
 		os.Exit(1)
 	}
-	fmt.Printf("Recebida: ´%s´ Enviada: ´%s´\n", req, rep)
+	println(count)
+	// fmt.Printf("Recebida: ´%s´ Enviada: ´%s´\n", req, rep)
 
 }
